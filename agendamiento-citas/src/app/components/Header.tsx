@@ -18,13 +18,26 @@ export default function Header({
 }: HeaderProps) {
     return (
         <header className="app-header">
-            <div className="logo">
-                <svg fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-                    <path d="M12 2v20"></path>
-                    <path d="M5 10c0-3.9 3.1-7 7-7s7 3.1 7 7v4"></path>
-                    <path d="M2.5 14h19"></path>
-                </svg>
-                Contigo profe
+            <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{
+                    backgroundColor: '#000',
+                    color: '#fff',
+                    padding: '0.4rem 0.6rem',
+                    borderRadius: '8px',
+                    fontFamily: '"SF Mono", "Consolas", monospace',
+                    fontWeight: 800,
+                    fontSize: '1.2rem',
+                    lineHeight: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.15)'
+                }}>
+                    <span style={{ opacity: 0.9, marginRight: '2px' }}>{'{'}</span>
+                    <span style={{ fontFamily: 'system-ui, sans-serif', fontWeight: 900, letterSpacing: '-0.5px' }}>SV</span>
+                    <span style={{ opacity: 0.9, marginLeft: '2px' }}>{'}'}</span>
+                </div>
+                <span>Contigo profe</span>
             </div>
 
             {currentUser && (
