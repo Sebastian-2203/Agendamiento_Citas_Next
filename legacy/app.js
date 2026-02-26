@@ -8,6 +8,10 @@ const state = {
     calendar: {
         year: 2026,
         month: 1 // Febrero (0-indexed)
+    },
+    psychProfile: {
+        name: 'Dra. Laura Pérez',
+        avatarUrl: 'https://i.pravatar.cc/150?img=47'
     }
 };
 
@@ -18,17 +22,29 @@ const dailySchedule = [
 ];
 
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const daysWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
 // DOM Elements
 const views = {
     login: document.getElementById('login-view'),
     teacher: document.getElementById('teacher-view'),
-    psych: document.getElementById('psych-view')
+    psych: document.getElementById('psych-view'),
+    profile: document.getElementById('profile-view')
 };
 
 const navMenu = document.getElementById('nav-menu');
+const navAgendaBtn = document.getElementById('nav-agenda-btn');
+const navProfileBtn = document.getElementById('nav-profile-btn');
 const userDisplay = document.getElementById('user-display');
+const userRoleDisplay = document.getElementById('user-role-display');
+const userAvatar = document.getElementById('user-avatar');
 const logoutBtn = document.getElementById('logout-btn');
+
+// Profile Elements
+const profileForm = document.getElementById('profile-form');
+const profileNameInput = document.getElementById('profile-name');
+const profileImgUpload = document.getElementById('profile-img-upload');
+const profilePreviewImg = document.getElementById('profile-preview-img');
 
 // Login Elements
 const loginSelection = document.getElementById('login-selection');
@@ -46,6 +62,8 @@ const slotsContainer = document.getElementById('slots-container');
 const timeSlotsGrid = document.getElementById('time-slots');
 
 const scheduleList = document.getElementById('schedule-list');
+const emptyScheduleCard = document.getElementById('empty-schedule-card');
+const upcomingDateHeader = document.getElementById('upcoming-date-header');
 const bookingModal = document.getElementById('booking-modal');
 const modalSlotInfo = document.getElementById('modal-slot-info');
 const bookingForm = document.getElementById('booking-form');
@@ -98,6 +116,56 @@ function setupEventListeners() {
             loginErrorMsg.style.display = 'block';
         }
     });
+
+    // Psych Nav Links
+    if (navAgendaBtn && navProfileBtn) {
+        navAgendaBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navAgendaBtn.classList.add('active');
+            navProfileBtn.classList.remove('active');
+            views.profile.classList.add('hidden');
+            views.profile.classList.remove('active');
+            views.psych.classList.remove('hidden');
+            views.psych.classList.add('active');
+        });
+        navProfileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navProfileBtn.classList.add('active');
+            navAgendaBtn.classList.remove('active');
+            views.psych.classList.add('hidden');
+            views.psych.classList.remove('active');
+            views.profile.classList.remove('hidden');
+            views.profile.classList.add('active');
+
+            // Populate form
+            profileNameInput.value = state.psychProfile.name;
+            profilePreviewImg.src = state.psychProfile.avatarUrl;
+        });
+    }
+
+    if (profileImgUpload) {
+        profileImgUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    profilePreviewImg.src = evt.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (profileForm) {
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            state.psychProfile.name = profileNameInput.value;
+            state.psychProfile.avatarUrl = profilePreviewImg.src;
+
+            updateUI(); // This will refresh the header
+            alert('Perfil actualizado correctamente');
+        });
+    }
 
     // Calendar Navigation
     prevMonthBtn.addEventListener('click', () => changeMonth(-1));
@@ -158,6 +226,10 @@ function logout() {
     psychLoginForm.classList.add('hidden');
     loginSelection.classList.remove('hidden');
 
+    // Reset nav buttons
+    if (navAgendaBtn) navAgendaBtn.classList.add('active');
+    if (navProfileBtn) navProfileBtn.classList.remove('active');
+
     updateUI();
 }
 
@@ -182,7 +254,9 @@ function changeMonth(delta) {
 function selectDate(dateStr) {
     state.selectedDate = dateStr;
     const [y, m, d] = dateStr.split('-');
-    /* selectedDateDisplay.textContent = `${parseInt(d)} de ${months[parseInt(m) - 1]} ${y}`; */ // Title fixed now
+
+    document.getElementById('selected-date-title').textContent = `Elegí para el ${parseInt(d)} de ${months[parseInt(m) - 1]}`;
+
     slotsContainer.classList.remove('hidden');
 
     const confirmBtn = document.getElementById('confirm-booking-btn');
@@ -250,16 +324,31 @@ function updateUI() {
         navMenu.classList.add('hidden');
     } else {
         navMenu.classList.remove('hidden');
-        userDisplay.textContent = state.currentUser === 'teacher' ? 'Modo: Profesor' : 'Modo: Psicóloga';
+        userDisplay.textContent = state.currentUser === 'teacher' ? 'Paciente' : state.psychProfile.name;
+        userAvatar.src = state.currentUser === 'teacher' ? 'https://i.pravatar.cc/150?img=1' : state.psychProfile.avatarUrl;
+        if (userRoleDisplay) userRoleDisplay.textContent = state.currentUser === 'teacher' ? 'Modo Paciente' : 'Modo Psicóloga';
 
         if (state.currentUser === 'teacher') {
             views.teacher.classList.remove('hidden');
             views.teacher.classList.add('active');
             renderCalendar();
+            // Hide psych nav links
+            if (navAgendaBtn) navAgendaBtn.style.display = 'none';
+            if (navProfileBtn) navProfileBtn.style.display = 'none';
         } else {
+            // Only show agenda since profile requires clicking nav link
             views.psych.classList.remove('hidden');
             views.psych.classList.add('active');
             renderPsychView();
+            // Show psych nav links
+            if (navAgendaBtn) {
+                navAgendaBtn.style.display = 'inline-block';
+                navAgendaBtn.classList.add('active');
+            }
+            if (navProfileBtn) {
+                navProfileBtn.style.display = 'inline-block';
+                navProfileBtn.classList.remove('active');
+            }
         }
     }
 }
@@ -324,7 +413,7 @@ function renderSlots() {
         card.innerHTML = `
             <div class="slot-time">${time}</div>
             <div class="slot-status">
-                ${isBooked ? 'Ocupado' : 'Disponible'}
+                ${isBooked ? 'Ocupado' : 'Disponibles'}
             </div>
         `;
 
@@ -351,14 +440,22 @@ function renderPsychView() {
     });
 
     if (sortedBookings.length === 0) {
-        scheduleList.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-muted);">No hay citas programadas aún.</div>';
+        scheduleList.classList.add('hidden');
+        emptyScheduleCard.classList.remove('hidden');
+        upcomingDateHeader.textContent = '';
         return;
     }
 
-    sortedBookings.forEach(booking => {
-        const [y, m, d] = booking.date.split('-');
-        const dateStrFormated = `${parseInt(d)} de ${months[parseInt(m) - 1]} ${y}`;
+    scheduleList.classList.remove('hidden');
+    emptyScheduleCard.classList.add('hidden');
 
+    // Muestra la fecha del primer booking para la cabecera
+    const firstBooking = sortedBookings[0];
+    const [y, m, d] = firstBooking.date.split('-');
+    const dateObj = new Date(y, m - 1, d);
+    upcomingDateHeader.textContent = `${daysWeek[dateObj.getDay()]} ${parseInt(d)} de ${months[parseInt(m) - 1]}`;
+
+    sortedBookings.forEach(booking => {
         const isDone = booking.status === 'done';
 
         const item = document.createElement('div');
@@ -368,31 +465,29 @@ function renderPsychView() {
         if (!isDone) {
             actionsHtml = `
             <div class="schedule-actions">
-                <button class="btn-action done" onclick="window.markDone('${booking.id}')">✓ Hecha</button>
-                <button class="btn-action cancel" onclick="window.cancelBooking('${booking.id}')">✕ Cancelar</button>
+                <button class="btn-cancel-appt" onclick="window.cancelBooking('${booking.id}')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Cancelar cita
+                </button>
             </div>
             `;
         } else {
             actionsHtml = `
-            <div class="schedule-actions" style="justify-content: center; color: var(--success-color); font-weight: 600;">
-                ✓ Completada
+            <div class="schedule-actions" style="color: var(--success-color); font-weight: 600; font-size: 0.9rem;">
+                Completada
             </div>
             `;
         }
 
+        // Random avatar based on name length for demo
+        const avatarSeed = booking.bookedBy.length;
+
         item.innerHTML = `
-            <div class="schedule-time-block">
-                <span class="time-large">${booking.time}</span>
-                <span class="slot-date" style="margin-bottom:0;">${dateStrFormated}</span>
-            </div>
-            <div class="schedule-details" style="display: flex; gap: 1rem; align-items: center;">
-                <div style="font-size: 2rem; background: var(--bg-color); border-radius: 50%; min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); border: 2px solid var(--border-color);">
-                    👤
-                </div>
-                <div>
-                    <div class="student-name" style="font-size: 1.1rem;">${booking.bookedBy} <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">(${booking.sede})</span></div>
-                    <div class="booking-note" style="margin-bottom: 0.2rem;"><strong style="font-size: 0.8rem;">C.C:</strong> ${booking.cedula}</div>
-                    <div class="booking-note" style="color: var(--primary-color); font-weight: 500;"><span style="font-size: 0.8rem;">📝 Motivo:</span> ${booking.reason || 'No especificado'}</div>
+            <div class="schedule-patient-info">
+                <img src="https://i.pravatar.cc/150?u=${avatarSeed}" alt="Patient" class="patient-avatar">
+                <div class="patient-details">
+                    <span class="patient-name">${booking.bookedBy}</span>
+                    <span class="patient-time">${booking.time} - ${(parseInt(booking.time) + 1).toString().padStart(2, '0')}:${booking.time.split(':')[1]}</span>
                 </div>
             </div>
             ${actionsHtml}
@@ -416,3 +511,4 @@ window.cancelBooking = function (id) {
 
 // Start
 init();
+
