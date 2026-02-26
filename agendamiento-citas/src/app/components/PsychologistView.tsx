@@ -70,6 +70,10 @@ export default function PsychologistView({ bookings, onUpdateBookings }: Psychol
                                         <img src={`https://i.pravatar.cc/150?u=${avatarSeed}`} alt="Patient" className="patient-avatar" />
                                         <div className="patient-details">
                                             <span className="patient-name">{booking.bookedBy}</span>
+                                            <p className="card-text text-gray-600 mb-2">
+                                                <strong>Escuela:</strong> {booking.school} <br />
+                                                <strong>Sede:</strong> {booking.sede}
+                                            </p>
                                             <span className="patient-time">
                                                 {booking.time} - {String(parseInt(booking.time.split(':')[0]) + 1).padStart(2, '0')}:{booking.time.split(':')[1]}
                                             </span>

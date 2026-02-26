@@ -16,6 +16,7 @@ export interface Booking {
   time: string;
   bookedBy: string;
   cedula: string;
+  school: string;
   sede: string;
   reason: string;
   status: string;

@@ -18,6 +18,7 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Form State
     const [reason, setReason] = useState("");
@@ -44,22 +45,45 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
         setSelectedSlot(null);
     };
 
-    const handleBookingSubmit = (e: React.FormEvent) => {
+    const handleBookingSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (selectedDate && selectedSlot) {
+            setIsSubmitting(true);
             const newBooking: Booking = {
                 id: Date.now().toString(),
                 date: selectedDate,
                 time: selectedSlot,
                 bookedBy: teacherProfile.name,
                 cedula: teacherProfile.cedula,
-                sede: `${teacherProfile.school} - ${teacherProfile.sede}`,
+                school: teacherProfile.school,
+                sede: teacherProfile.sede,
                 reason,
                 status: "pending"
             };
 
+            try {
+                // Notificar por correo a la psicóloga
+                await fetch('/api/notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: teacherProfile.name,
+                        cedula: teacherProfile.cedula,
+                        school: teacherProfile.school,
+                        sede: teacherProfile.sede,
+                        date: selectedDate,
+                        time: selectedSlot,
+                        reason: reason
+                    })
+                });
+            } catch (error) {
+                console.error("Error al enviar notificación:", error);
+                // Continuamos igual aunque falle el correo para no bloquear al usuario
+            }
+
             onBook(newBooking);
             alert('¡Cita agendada con éxito!');
+            setIsSubmitting(false);
             setShowModal(false);
             setReason("");
             setSelectedSlot(null);
@@ -236,8 +260,10 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
                             <textarea id="booking-reason" rows={3} placeholder="Breve descripción del motivo de la cita..." value={reason} onChange={e => setReason(e.target.value)}></textarea>
                         </div>
                         <div className="modal-actions">
-                            <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                            <button type="submit" className="btn-primary">Confirmar Agendamiento</button>
+                            <button type="button" className="btn-secondary" onClick={() => setShowModal(false)} disabled={isSubmitting}>Cancelar</button>
+                            <button type="submit" className="btn-primary" disabled={isSubmitting}>
+                                {isSubmitting ? 'Agendando...' : 'Confirmar Agendamiento'}
+                            </button>
                         </div>
                     </form>
                 </div>
