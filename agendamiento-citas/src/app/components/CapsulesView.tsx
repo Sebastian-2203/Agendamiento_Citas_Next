@@ -51,14 +51,32 @@ const capsules = [
     }
 ];
 
-export default function CapsulesView() {
+interface CapsulesViewProps {
+    onBack?: () => void;
+}
+
+export default function CapsulesView({ onBack }: CapsulesViewProps) {
     return (
         <section className="view active animate-fade-in" style={{ paddingBottom: "4rem" }}>
-            <div className="header-actions" style={{ marginBottom: "2rem", textAlign: "left" }}>
-                <h2 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Cápsulas de Salud Mental</h2>
-                <p className="subtitle" style={{ textAlign: "left" }}>
-                    Un espacio pensado para tu bienestar. Explora nuestros recursos y consejos.
-                </p>
+            <div className="header-actions" style={{ marginBottom: "2rem", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem" }}>
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="btn-secondary"
+                        style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", borderRadius: "8px" }}
+                    >
+                        <svg fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="18">
+                            <path d="m15 18-6-6 6-6"></path>
+                        </svg>
+                        Volver al inicio
+                    </button>
+                )}
+                <div>
+                    <h2 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Cápsulas de Salud Mental</h2>
+                    <p className="subtitle" style={{ textAlign: "left", margin: 0 }}>
+                        Un espacio pensado para tu bienestar. Explora nuestros recursos y consejos.
+                    </p>
+                </div>
             </div>
 
             <div className="masonry-grid" style={{

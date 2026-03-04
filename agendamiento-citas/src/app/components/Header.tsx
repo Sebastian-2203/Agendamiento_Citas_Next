@@ -4,8 +4,8 @@ import { UserType, PsychProfile } from "../page";
 interface HeaderProps {
     currentUser: UserType;
     psychProfile: PsychProfile;
-    activeTab: "agenda" | "profile" | "capsules";
-    onTabChange: (tab: "agenda" | "profile" | "capsules") => void;
+    activeTab: "agenda" | "profile";
+    onTabChange: (tab: "agenda" | "profile") => void;
     onLogout: () => void;
 }
 
@@ -53,18 +53,6 @@ export default function Header({
                         }}
                     >
                         Mi Agenda
-                    </a>
-
-                    <a
-                        href="#"
-                        className={`nav-link ${activeTab === "capsules" ? "active" : ""}`}
-                        style={{ color: activeTab === 'capsules' ? '#4f46e5' : '#64748b', fontWeight: activeTab === 'capsules' ? 600 : 500 }}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            onTabChange("capsules");
-                        }}
-                    >
-                        Cápsulas de salud mental
                     </a>
 
                     {/* Botones solo de Psicóloga */}

@@ -3,9 +3,10 @@ import { UserType } from "../page";
 
 interface LoginViewProps {
     onLogin: (role: UserType) => void;
+    onViewCapsules: () => void;
 }
 
-export default function LoginView({ onLogin }: LoginViewProps) {
+export default function LoginView({ onLogin, onViewCapsules }: LoginViewProps) {
     const [showPsychLogin, setShowPsychLogin] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -51,6 +52,21 @@ export default function LoginView({ onLogin }: LoginViewProps) {
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                             Soy Paciente
+                        </button>
+
+                        <div style={{ margin: "1.5rem 0", display: "flex", alignItems: "center", gap: "1rem" }}>
+                            <div style={{ flex: 1, height: "1px", backgroundColor: "#e2e8f0" }}></div>
+                            <span style={{ color: "#64748b", fontSize: "0.9rem" }}>o explora recursos</span>
+                            <div style={{ flex: 1, height: "1px", backgroundColor: "#e2e8f0" }}></div>
+                        </div>
+
+                        <button
+                            onClick={onViewCapsules}
+                            className="btn-secondary"
+                            style={{ fontSize: "1.1rem", padding: "1rem", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%", background: "#f8fafc", border: "1px solid #e2e8f0", color: "#334155" }}
+                        >
+                            <span>🧠</span>
+                            Cápsulas de salud mental
                         </button>
                     </div>
                 ) : (

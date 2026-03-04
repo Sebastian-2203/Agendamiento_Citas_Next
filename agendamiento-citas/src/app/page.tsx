@@ -44,18 +44,25 @@ export default function Home() {
     avatarUrl: "https://i.pravatar.cc/150?img=47",
   });
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "profile">("agenda");
+  const [showCapsules, setShowCapsules] = useState(false);
 
   const handleLogin = (role: UserType) => {
     setCurrentUser(role);
     setActiveTab("agenda");
+    setShowCapsules(false);
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setTeacherProfile(null);
     setActiveTab("agenda");
+    setShowCapsules(false);
   };
+
+  if (showCapsules) {
+    return <CapsulesView onBack={() => setShowCapsules(false)} />;
+  }
 
   return (
     <>
@@ -68,7 +75,7 @@ export default function Home() {
       />
 
       <main className="container">
-        {!currentUser && <LoginView onLogin={handleLogin} />}
+        {!currentUser && <LoginView onLogin={handleLogin} onViewCapsules={() => setShowCapsules(true)} />}
 
         {currentUser === "teacher" && !teacherProfile && (
           <TeacherProfileForm onComplete={setTeacherProfile} />
@@ -94,10 +101,6 @@ export default function Home() {
             profile={psychProfile}
             onSave={setPsychProfile}
           />
-        )}
-
-        {currentUser && activeTab === "capsules" && (
-          <CapsulesView />
         )}
       </main>
     </>
