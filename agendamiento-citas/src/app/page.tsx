@@ -7,6 +7,7 @@ import PatientView from "./components/PatientView";
 import PsychologistView from "./components/PsychologistView";
 import ProfileView from "./components/ProfileView";
 import TeacherProfileForm from "./components/TeacherProfileForm";
+import CapsulesView from "./components/CapsulesView";
 
 export type UserType = "teacher" | "psychologist" | null;
 
@@ -32,6 +33,7 @@ export interface TeacherProfile {
   cedula: string;
   school: string;
   sede: string;
+  isUrgent: boolean;
 }
 
 export default function Home() {
@@ -42,7 +44,7 @@ export default function Home() {
     avatarUrl: "https://i.pravatar.cc/150?img=47",
   });
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [activeTab, setActiveTab] = useState<"agenda" | "profile">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
 
   const handleLogin = (role: UserType) => {
     setCurrentUser(role);
@@ -92,6 +94,10 @@ export default function Home() {
             profile={psychProfile}
             onSave={setPsychProfile}
           />
+        )}
+
+        {currentUser && activeTab === "capsules" && (
+          <CapsulesView />
         )}
       </main>
     </>

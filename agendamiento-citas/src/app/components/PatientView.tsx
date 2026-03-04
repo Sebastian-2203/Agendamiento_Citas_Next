@@ -92,14 +92,20 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
 
     const isDayAllowed = (dayOfWeek: number) => {
         // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
-        const { school, sede } = teacherProfile;
+        const { school, sede, isUrgent } = teacherProfile;
+
+        // Si es carácter urgente o fin de semana
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            return false;
+        }
+
+        if (isUrgent) {
+            return true;
+        }
 
         if (school === "Colegio O.E.A IED") {
-            if (sede === "Sede A") return dayOfWeek === 1 || dayOfWeek === 5; // Monday, Friday
-            if (sede === "Sede B") return dayOfWeek === 4; // Thursday
-        } else if (school === "Colegio La floresta sur IED") {
-            if (sede === "Sede A") return dayOfWeek === 2; // Tuesday
-            if (sede === "Sede B") return dayOfWeek === 3; // Wednesday
+            if (sede === "Sede A") return dayOfWeek !== 4; // Lunes, Martes, Miércoles, Viernes
+            if (sede === "Sede B") return dayOfWeek === 4; // Jueves
         }
 
         return false;

@@ -10,10 +10,11 @@ export default function TeacherProfileForm({ onComplete }: TeacherProfileFormPro
     const [cedula, setCedula] = useState("");
     const [school, setSchool] = useState("Colegio O.E.A IED");
     const [sede, setSede] = useState("Sede A");
+    const [isUrgent, setIsUrgent] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onComplete({ name, cedula, school, sede });
+        onComplete({ name, cedula, school, sede, isUrgent });
     };
 
     return (
@@ -59,7 +60,6 @@ export default function TeacherProfileForm({ onComplete }: TeacherProfileFormPro
                             className="form-control"
                         >
                             <option value="Colegio O.E.A IED">Colegio O.E.A IED</option>
-                            <option value="Colegio La floresta sur IED">Colegio La floresta sur IED</option>
                         </select>
                     </div>
 
@@ -75,6 +75,19 @@ export default function TeacherProfileForm({ onComplete }: TeacherProfileFormPro
                             <option value="Sede A">Sede A</option>
                             <option value="Sede B">Sede B</option>
                         </select>
+                    </div>
+
+                    <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "1rem" }}>
+                        <input
+                            type="checkbox"
+                            id="teacher-urgent"
+                            checked={isUrgent}
+                            onChange={(e) => setIsUrgent(e.target.checked)}
+                            style={{ width: "auto", margin: 0 }}
+                        />
+                        <label htmlFor="teacher-urgent" style={{ marginBottom: 0, fontWeight: "normal" }}>
+                            Es de carácter urgente
+                        </label>
                     </div>
 
                     <div style={{ marginTop: "2rem", display: "flex", justifyContent: "flex-end" }}>

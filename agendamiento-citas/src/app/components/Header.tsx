@@ -4,8 +4,8 @@ import { UserType, PsychProfile } from "../page";
 interface HeaderProps {
     currentUser: UserType;
     psychProfile: PsychProfile;
-    activeTab: "agenda" | "profile";
-    onTabChange: (tab: "agenda" | "profile") => void;
+    activeTab: "agenda" | "profile" | "capsules";
+    onTabChange: (tab: "agenda" | "profile" | "capsules") => void;
     onLogout: () => void;
 }
 
@@ -41,30 +41,44 @@ export default function Header({
             </div>
 
             {currentUser && (
-                <nav id="nav-menu">
+                <nav id="nav-menu" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+
+                    {/* Botones comunes para todos */}
+                    <a
+                        href="#"
+                        className={`nav-link ${activeTab === "agenda" ? "active" : ""}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onTabChange("agenda");
+                        }}
+                    >
+                        Mi Agenda
+                    </a>
+
+                    <a
+                        href="#"
+                        className={`nav-link ${activeTab === "capsules" ? "active" : ""}`}
+                        style={{ color: activeTab === 'capsules' ? '#4f46e5' : '#64748b', fontWeight: activeTab === 'capsules' ? 600 : 500 }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            onTabChange("capsules");
+                        }}
+                    >
+                        Cápsulas de salud mental
+                    </a>
+
+                    {/* Botones solo de Psicóloga */}
                     {currentUser === "psychologist" && (
-                        <>
-                            <a
-                                href="#"
-                                className={`nav-link ${activeTab === "agenda" ? "active" : ""}`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    onTabChange("agenda");
-                                }}
-                            >
-                                Mi Agenda
-                            </a>
-                            <a
-                                href="#"
-                                className={`nav-link ${activeTab === "profile" ? "active" : ""}`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    onTabChange("profile");
-                                }}
-                            >
-                                Perfil
-                            </a>
-                        </>
+                        <a
+                            href="#"
+                            className={`nav-link ${activeTab === "profile" ? "active" : ""}`}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                onTabChange("profile");
+                            }}
+                        >
+                            Perfil
+                        </a>
                     )}
 
                     <button onClick={onLogout} className="nav-link text-btn">
