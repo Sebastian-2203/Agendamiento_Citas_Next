@@ -70,7 +70,7 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                             onClick={() => setSelectedCapsule(capsule)}
                         >
                             <div style={{
-                                height: '60%',
+                                height: '100%',
                                 width: '100%',
                                 backgroundImage: `url(${capsule.imageUrl})`,
                                 backgroundSize: 'cover',
@@ -80,33 +80,41 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                                 <div style={{
                                     position: 'absolute',
                                     top: 0, left: 0, right: 0, bottom: 0,
-                                    background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 100%)'
+                                    background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 100%)'
                                 }} />
-                            </div>
-
-                            <div style={{
-                                padding: '1.5rem',
-                                background: '#ffffff',
-                                flex: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '1.25rem',
-                                    fontWeight: 700,
-                                    marginBottom: '0.8rem',
-                                    color: '#1e293b'
+                                {/* Título sobre la imagen en la tarjeta */}
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '1rem',
+                                    left: '1rem',
+                                    right: '1rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '0.5rem'
                                 }}>
-                                    {capsule.title}
-                                </h3>
-                                <p style={{
-                                    color: '#64748b',
-                                    fontSize: '0.95rem',
-                                    lineHeight: 1.5
-                                }}>
-                                    {capsule.description}
-                                </p>
+                                    <h3 style={{
+                                        color: '#ffffff',
+                                        fontSize: '1.25rem',
+                                        fontWeight: 700,
+                                        margin: 0,
+                                        textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                                    }}>
+                                        {capsule.title}
+                                    </h3>
+                                    <div style={{ display: 'flex' }}>
+                                        <span style={{
+                                            background: 'rgba(255, 255, 255, 0.9)',
+                                            color: '#0f172a',
+                                            padding: '0.4rem 0.8rem',
+                                            borderRadius: '20px',
+                                            fontSize: '0.8rem',
+                                            fontWeight: 600,
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}>
+                                            Abrir Cápsula
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -173,23 +181,26 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
 
-                        {/* Imagen completa */}
-                        <div style={{ flex: '1 1 auto', position: 'relative', minHeight: '200px', maxHeight: '50vh', background: '#000' }}>
-                            <img
-                                src={selectedCapsule.imageUrl}
-                                alt={selectedCapsule.title}
-                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            />
-                        </div>
+                        {/* Contenido Scrollable (Imagen Flyer + Texto) */}
+                        <div style={{ overflowY: 'auto', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            {/* Imagen completa (flyer) que crece verticalmente */}
+                            <div style={{ width: '100%', backgroundColor: '#f8fafc', display: 'flex', justifyContent: 'center', minHeight: '200px' }}>
+                                <img
+                                    src={selectedCapsule.imageUrl}
+                                    alt={selectedCapsule.title}
+                                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                                />
+                            </div>
 
-                        {/* Contenido Texto */}
-                        <div style={{ padding: '2rem', flexShrink: 0, overflowY: 'auto' }}>
-                            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', lineHeight: 1.2 }}>
-                                {selectedCapsule.title}
-                            </h2>
-                            <p style={{ fontSize: '1.1rem', color: '#475569', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
-                                {selectedCapsule.description}
-                            </p>
+                            {/* Contenido Texto */}
+                            <div style={{ padding: '2rem', flexShrink: 0, backgroundColor: '#ffffff' }}>
+                                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', lineHeight: 1.2 }}>
+                                    {selectedCapsule.title}
+                                </h2>
+                                <p style={{ fontSize: '1.1rem', color: '#475569', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                                    {selectedCapsule.description}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
