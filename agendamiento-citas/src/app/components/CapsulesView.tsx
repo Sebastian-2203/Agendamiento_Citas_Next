@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export interface Capsule {
     id: number;
@@ -15,6 +15,7 @@ interface CapsulesViewProps {
 }
 
 export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
+    const [selectedCapsule, setSelectedCapsule] = useState<Capsule | null>(null);
 
     return (
         <section className="view active animate-fade-in" style={{ paddingBottom: "4rem" }}>
@@ -66,6 +67,7 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease'
                             }}
+                            onClick={() => setSelectedCapsule(capsule)}
                         >
                             <div style={{
                                 height: '60%',
@@ -111,6 +113,88 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                 </div>
             )}
 
+            {/* Modal de Detalle de Cápsula */}
+            {selectedCapsule && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        zIndex: 9999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '2rem',
+                        animation: 'fadeIn 0.3s ease-out'
+                    }}
+                    onClick={() => setSelectedCapsule(null)}
+                >
+                    <div
+                        style={{
+                            background: '#ffffff',
+                            borderRadius: '24px',
+                            width: '100%',
+                            maxWidth: '600px',
+                            maxHeight: '90vh',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                            position: 'relative',
+                            animation: 'slideUp 0.3s ease-out'
+                        }}
+                        onClick={e => e.stopPropagation()} // Evitar cerrar al hacer click dentro del modal
+                    >
+                        {/* Botón Cerrar */}
+                        <button
+                            onClick={() => setSelectedCapsule(null)}
+                            style={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'rgba(0,0,0,0.5)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '36px',
+                                height: '36px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                zIndex: 10,
+                                backdropFilter: 'blur(4px)',
+                                transition: 'background 0.2s'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+
+                        {/* Imagen completa */}
+                        <div style={{ flex: '1 1 auto', position: 'relative', minHeight: '200px', maxHeight: '50vh', background: '#000' }}>
+                            <img
+                                src={selectedCapsule.imageUrl}
+                                alt={selectedCapsule.title}
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                        </div>
+
+                        {/* Contenido Texto */}
+                        <div style={{ padding: '2rem', flexShrink: 0, overflowY: 'auto' }}>
+                            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', lineHeight: 1.2 }}>
+                                {selectedCapsule.title}
+                            </h2>
+                            <p style={{ fontSize: '1.1rem', color: '#475569', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                                {selectedCapsule.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <style jsx>{`
                 .hover-lift:hover {
                     transform: translateY(-8px);
@@ -124,6 +208,16 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                     .capsule-card {
                         grid-column: span 1 !important;
                     }
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
                 }
             `}</style>
         </section>
