@@ -24,7 +24,7 @@ export default function LoginView({ onLogin, onViewCapsules }: LoginViewProps) {
     return (
         <section id="login-view" className="view active">
             <div className="login-card">
-                <h1>👋 Bienvenida, ¡Qué gusto verte!</h1>
+                <h1>👋 Bienvenid@, ¡Qué gusto verte!</h1>
                 <p className="subtitle">Agenda tus citas de forma fácil y rápida ✨</p>
 
                 {!showPsychLogin ? (
