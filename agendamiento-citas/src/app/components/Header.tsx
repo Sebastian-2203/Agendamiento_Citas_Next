@@ -4,8 +4,8 @@ import { UserType, PsychProfile } from "../page";
 interface HeaderProps {
     currentUser: UserType;
     psychProfile: PsychProfile;
-    activeTab: "agenda" | "profile";
-    onTabChange: (tab: "agenda" | "profile") => void;
+    activeTab: "agenda" | "profile" | "capsules";
+    onTabChange: (tab: "agenda" | "profile" | "capsules") => void;
     onLogout: () => void;
 }
 
@@ -57,16 +57,28 @@ export default function Header({
 
                     {/* Botones solo de Psicóloga */}
                     {currentUser === "psychologist" && (
-                        <a
-                            href="#"
-                            className={`nav-link ${activeTab === "profile" ? "active" : ""}`}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                onTabChange("profile");
-                            }}
-                        >
-                            Perfil
-                        </a>
+                        <>
+                            <a
+                                href="#"
+                                className={`nav-link ${activeTab === "profile" ? "active" : ""}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onTabChange("profile");
+                                }}
+                            >
+                                Perfil
+                            </a>
+                            <a
+                                href="#"
+                                className={`nav-link ${activeTab === "capsules" ? "active" : ""}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onTabChange("capsules");
+                                }}
+                            >
+                                Cápsulas
+                            </a>
+                        </>
                     )}
 
                     <button onClick={onLogout} className="nav-link text-btn">

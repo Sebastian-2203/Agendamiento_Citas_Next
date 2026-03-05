@@ -9,6 +9,8 @@ import ProfileView from "./components/ProfileView";
 import TeacherProfileForm from "./components/TeacherProfileForm";
 import CapsulesView from "./components/CapsulesView";
 
+import AdminCapsulesView from "./components/AdminCapsulesView";
+
 export type UserType = "teacher" | "psychologist" | null;
 
 export interface Booking {
@@ -44,7 +46,7 @@ export default function Home() {
     avatarUrl: "https://i.pravatar.cc/150?img=47",
   });
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [activeTab, setActiveTab] = useState<"agenda" | "profile">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
   const [showCapsules, setShowCapsules] = useState(false);
 
   const handleLogin = (role: UserType) => {
@@ -69,8 +71,8 @@ export default function Home() {
       <Header
         currentUser={currentUser}
         psychProfile={psychProfile}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
+        activeTab={activeTab as "agenda" | "profile"}
+        onTabChange={(tab) => setActiveTab(tab)}
         onLogout={handleLogout}
       />
 
@@ -101,6 +103,10 @@ export default function Home() {
             profile={psychProfile}
             onSave={setPsychProfile}
           />
+        )}
+
+        {currentUser === "psychologist" && activeTab === "capsules" && (
+          <AdminCapsulesView />
         )}
       </main>
     </>
