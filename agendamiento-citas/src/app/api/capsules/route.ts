@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
 import { NextResponse } from 'next/server';
 
 export interface Capsule {
@@ -12,13 +12,28 @@ export interface Capsule {
 
 const KV_KEY = 'mental-health-capsules';
 
+// Helper to get connected redis client
+async function getRedis() {
+    // We conditionally use process.env.REDIS_URL or KV_URL if available provided by Upstash
+    const url = process.env.KV_URL || process.env.REDIS_URL || process.env.UPSTASH_REDIS_REST_URL;
+    const client = createClient({ url });
+    await client.connect();
+    return client;
+}
+
 // Obtener todas las cápsulas
 export async function GET() {
     try {
-        const capsules: Capsule[] | null = await kv.get(KV_KEY);
-        return NextResponse.json(capsules || []);
+        const redis = await getRedis();
+        const data = await redis.get(KV_KEY);
+        await redis.disconnect();
+
+        let capsules: Capsule[] = [];
+        if (data) capsules = JSON.parse(data);
+
+        return NextResponse.json(capsules);
     } catch (error) {
-        console.error('Error al obtener cápsulas de KV', error);
+        console.error('Error al obtener cápsulas de Redis', error);
         return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
     }
 }
@@ -27,22 +42,24 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body: Capsule = await request.json();
+        const redis = await getRedis();
 
         // Obtener actuales
-        let capsules: Capsule[] | null = await kv.get(KV_KEY);
-        if (!capsules) capsules = [];
+        const data = await redis.get(KV_KEY);
+        let capsules: Capsule[] = data ? JSON.parse(data) : [];
 
         // Generar ID
         const maxId = capsules.reduce((max, c) => Math.max(max, c.id), 0);
         const newCapsule = { ...body, id: maxId + 1 };
 
-        // Guardar array actualizado en KV
+        // Guardar array actualizado
         capsules.unshift(newCapsule);
-        await kv.set(KV_KEY, capsules);
+        await redis.set(KV_KEY, JSON.stringify(capsules));
+        await redis.disconnect();
 
         return NextResponse.json(newCapsule, { status: 201 });
     } catch (error) {
-        console.error('Error al crear cápsula en KV', error);
+        console.error('Error al crear cápsula en Redis', error);
         return NextResponse.json({ error: 'Error guardando cápsula' }, { status: 500 });
     }
 }
@@ -57,20 +74,29 @@ export async function PUT(request: Request) {
         const id = parseInt(idParam, 10);
         const body: Partial<Capsule> = await request.json();
 
-        // Obtener actuales
-        const capsules: Capsule[] | null = await kv.get(KV_KEY);
-        if (!capsules) return NextResponse.json({ error: 'No hay cápsulas' }, { status: 404 });
+        const redis = await getRedis();
+        const data = await redis.get(KV_KEY);
+        let capsules: Capsule[] = data ? JSON.parse(data) : [];
+
+        if (capsules.length === 0) {
+            await redis.disconnect();
+            return NextResponse.json({ error: 'No hay cápsulas' }, { status: 404 });
+        }
 
         // Actualizar
         const index = capsules.findIndex(c => c.id === id);
-        if (index === -1) return NextResponse.json({ error: 'Cápsula no encontrada' }, { status: 404 });
+        if (index === -1) {
+            await redis.disconnect();
+            return NextResponse.json({ error: 'Cápsula no encontrada' }, { status: 404 });
+        }
 
         capsules[index] = { ...capsules[index], ...body };
-        await kv.set(KV_KEY, capsules);
+        await redis.set(KV_KEY, JSON.stringify(capsules));
+        await redis.disconnect();
 
         return NextResponse.json(capsules[index]);
     } catch (error) {
-        console.error('Error actualizando cápsula en KV', error);
+        console.error('Error actualizando cápsula en Redis', error);
         return NextResponse.json({ error: 'Error actualizando cápsula' }, { status: 500 });
     }
 }
@@ -84,17 +110,23 @@ export async function DELETE(request: Request) {
 
         const id = parseInt(idParam, 10);
 
-        // Obtener actuales
-        const capsules: Capsule[] | null = await kv.get(KV_KEY);
-        if (!capsules) return NextResponse.json({ success: true }); // Si no hay, no importa, ya fue borrada o no existía.
+        const redis = await getRedis();
+        const data = await redis.get(KV_KEY);
 
-        // Filtrar y guardar
+        if (!data) {
+            await redis.disconnect();
+            return NextResponse.json({ success: true });
+        }
+
+        let capsules: Capsule[] = JSON.parse(data);
         const newCapsules = capsules.filter(c => c.id !== id);
-        await kv.set(KV_KEY, newCapsules);
+
+        await redis.set(KV_KEY, JSON.stringify(newCapsules));
+        await redis.disconnect();
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Error eliminando cápsula en KV', error);
+        console.error('Error eliminando cápsula en Redis', error);
         return NextResponse.json({ error: 'Error eliminando cápsula' }, { status: 500 });
     }
 }
