@@ -13,10 +13,12 @@ export interface Capsule {
 
 export default function AdminCapsulesView({
     capsules,
-    onUpdateCapsules
+    onUpdateCapsules,
+    onForceReload
 }: {
     capsules: Capsule[],
-    onUpdateCapsules: React.Dispatch<React.SetStateAction<Capsule[]>>
+    onUpdateCapsules: React.Dispatch<React.SetStateAction<Capsule[]>>,
+    onForceReload: () => void
 }) {
     // Form state
     const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +31,13 @@ export default function AdminCapsulesView({
     const handleDelete = async (id: number) => {
         if (!confirm('¿Estás segura de que quieres eliminar esta cápsula?')) return;
 
-        onUpdateCapsules(capsules.filter(c => c.id !== id));
+        try {
+            const res = await fetch(`/api/capsules?id=${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Failed to delete capsule');
+            onForceReload();
+        } catch (err: any) {
+            alert(err.message || 'Error al eliminar cápsula');
+        }
     };
 
     const handleEditClick = (capsule: Capsule) => {
@@ -91,21 +99,24 @@ export default function AdminCapsulesView({
         const isUpdate = !!currentCapsule.id;
 
         try {
-            if (isUpdate) {
-                onUpdateCapsules(capsules.map(c => c.id === currentCapsule.id ? { ...c, ...currentCapsule } as Capsule : c));
-            } else {
-                const maxId = capsules.reduce((max, c) => Math.max(max, c.id), 0);
-                const newCapsule: Capsule = {
-                    id: maxId + 1,
-                    title: currentCapsule.title,
-                    description: currentCapsule.description,
-                    imageUrl: currentCapsule.imageUrl,
-                    color: currentCapsule.color || 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-                    span: currentCapsule.span || 1
-                };
-                onUpdateCapsules([newCapsule, ...capsules]);
+            const url = isUpdate ? `/api/capsules?id=${currentCapsule.id}` : '/api/capsules';
+            const method = isUpdate ? 'PUT' : 'POST';
+
+            // Si es nueva, no mandar ID (se genera en backend)
+            const bodyData = { ...currentCapsule };
+            if (!isUpdate) {
+                delete bodyData.id;
             }
 
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
+            });
+
+            if (!res.ok) throw new Error('Error guardando cápsula');
+
+            onForceReload();
             setIsEditing(false);
             setCurrentCapsule(null);
         } catch (err: any) {

@@ -50,24 +50,30 @@ export default function Home() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
   const [showCapsules, setShowCapsules] = useState(false);
-  const [capsules, setCapsules] = useState<Capsule[]>(initialCapsules);
+  const [capsules, setCapsules] = useState<Capsule[]>([]);
+  const [isCapsulesLoading, setIsCapsulesLoading] = useState(false);
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('mentalHealthCapsules');
-    if (saved) {
-      try {
-        setCapsules(JSON.parse(saved));
-      } catch (e) {
-        console.error("Error parsing saved capsules", e);
+  const fetchCapsules = async () => {
+    setIsCapsulesLoading(true);
+    try {
+      const res = await fetch('/api/capsules');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCapsules(data);
+        }
       }
+    } catch (e) {
+      console.error("Error fetching capsules from API", e);
+    } finally {
+      setIsCapsulesLoading(false);
     }
-  }, []);
+  };
 
-  // Save to localStorage when changed
+  // Load from Vercel KV API on mount
   useEffect(() => {
-    localStorage.setItem('mentalHealthCapsules', JSON.stringify(capsules));
-  }, [capsules]);
+    fetchCapsules();
+  }, []);
 
   const handleLogin = (role: UserType) => {
     setCurrentUser(role);
@@ -126,7 +132,7 @@ export default function Home() {
         )}
 
         {currentUser === "psychologist" && activeTab === "capsules" && (
-          <AdminCapsulesView capsules={capsules} onUpdateCapsules={setCapsules} />
+          <AdminCapsulesView capsules={capsules} onUpdateCapsules={setCapsules} onForceReload={fetchCapsules} />
         )}
       </main>
     </>
