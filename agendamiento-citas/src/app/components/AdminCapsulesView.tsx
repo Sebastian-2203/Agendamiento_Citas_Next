@@ -11,11 +11,13 @@ export interface Capsule {
     span: number;
 }
 
-export default function AdminCapsulesView() {
-    const [capsules, setCapsules] = useState<Capsule[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
+export default function AdminCapsulesView({
+    capsules,
+    onUpdateCapsules
+}: {
+    capsules: Capsule[],
+    onUpdateCapsules: React.Dispatch<React.SetStateAction<Capsule[]>>
+}) {
     // Form state
     const [isEditing, setIsEditing] = useState(false);
     const [currentCapsule, setCurrentCapsule] = useState<Partial<Capsule> | null>(null);
@@ -24,34 +26,10 @@ export default function AdminCapsulesView() {
     // File input ref
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const fetchCapsules = async () => {
-        setIsLoading(true);
-        try {
-            const res = await fetch('/api/capsules');
-            if (!res.ok) throw new Error('Failed to fetch capsules');
-            const data = await res.json();
-            setCapsules(data);
-        } catch (err: any) {
-            setError(err.message || 'Error al cargar cápsulas');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchCapsules();
-    }, []);
-
     const handleDelete = async (id: number) => {
         if (!confirm('¿Estás segura de que quieres eliminar esta cápsula?')) return;
 
-        try {
-            const res = await fetch(`/api/capsules?id=${id}`, { method: 'DELETE' });
-            if (!res.ok) throw new Error('Failed to delete capsule');
-            setCapsules(capsules.filter(c => c.id !== id));
-        } catch (err: any) {
-            alert(err.message || 'Error al eliminar cápsula');
-        }
+        onUpdateCapsules(capsules.filter(c => c.id !== id));
     };
 
     const handleEditClick = (capsule: Capsule) => {
@@ -113,19 +91,21 @@ export default function AdminCapsulesView() {
         const isUpdate = !!currentCapsule.id;
 
         try {
-            const url = isUpdate ? `/api/capsules?id=${currentCapsule.id}` : '/api/capsules';
-            const method = isUpdate ? 'PUT' : 'POST';
+            if (isUpdate) {
+                onUpdateCapsules(capsules.map(c => c.id === currentCapsule.id ? { ...c, ...currentCapsule } as Capsule : c));
+            } else {
+                const maxId = capsules.reduce((max, c) => Math.max(max, c.id), 0);
+                const newCapsule: Capsule = {
+                    id: maxId + 1,
+                    title: currentCapsule.title,
+                    description: currentCapsule.description,
+                    imageUrl: currentCapsule.imageUrl,
+                    color: currentCapsule.color || 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+                    span: currentCapsule.span || 1
+                };
+                onUpdateCapsules([newCapsule, ...capsules]);
+            }
 
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(currentCapsule)
-            });
-
-            if (!res.ok) throw new Error('Error guardando cápsula');
-
-            // Recargar para tener la versión final con ID
-            await fetchCapsules();
             setIsEditing(false);
             setCurrentCapsule(null);
         } catch (err: any) {
@@ -135,9 +115,6 @@ export default function AdminCapsulesView() {
         }
     };
 
-    if (isLoading && capsules.length === 0) {
-        return <div style={{ padding: '2rem', textAlign: 'center' }}>Cargando cápsulas...</div>;
-    }
 
     return (
         <section className="view active animate-fade-in" style={{ paddingBottom: '4rem' }}>
@@ -159,7 +136,6 @@ export default function AdminCapsulesView() {
                 )}
             </div>
 
-            {error && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}>{error}</div>}
 
             {isEditing ? (
                 // Formulario

@@ -1,0 +1,52 @@
+import { Capsule } from '../components/CapsulesView';
+
+export const initialCapsules: Capsule[] = [
+    {
+        id: 1,
+        title: "Técnicas de Respiración 4-7-8",
+        description: "Una técnica sencilla para reducir la ansiedad rápidamente. Inhala por 4 segundos, sostén 7 segundos y exhala por 8 segundos.",
+        imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
+        span: 2
+    },
+    {
+        id: 2,
+        title: "Pausas Activas",
+        description: "Recuerda levantarte y estirar cada hora para prevenir el estrés laboral y mejorar tu circulación.",
+        imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)",
+        span: 1
+    },
+    {
+        id: 3,
+        title: "Importancia del Sueño",
+        description: "Dormir de 7 a 8 horas mejora tu capacidad de concentración, memoria y estado de ánimo durante el día.",
+        imageUrl: "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #a6c0fe 0%, #f68084 100%)",
+        span: 1
+    },
+    {
+        id: 4,
+        title: "Mindfulness para docentes",
+        description: "Dedica 5 minutos antes de clases para estar presente. Cierra los ojos y escucha tu entorno sin juzgarlo.",
+        imageUrl: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)",
+        span: 2
+    },
+    {
+        id: 5,
+        title: "Manejo de Emociones",
+        description: "Está bien no estar bien. Reconocer tus emociones es el primer paso para procesarlas saludablemente.",
+        imageUrl: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)",
+        span: 1
+    },
+    {
+        id: 6,
+        title: "Límites Saludables",
+        description: "Aprender a decir 'no' es cuidar tu energía. Establece horarios de desconexión digital al salir del trabajo.",
+        imageUrl: "https://images.unsplash.com/photo-1476683874822-744764a243a9?auto=format&fit=crop&q=80&w=800",
+        color: "linear-gradient(135deg, #96e6a1 0%, #d4fc79 100%)",
+        span: 2
+    }
+];

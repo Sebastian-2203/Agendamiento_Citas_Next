@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import LoginView from "./components/LoginView";
 import PatientView from "./components/PatientView";
@@ -10,6 +10,8 @@ import TeacherProfileForm from "./components/TeacherProfileForm";
 import CapsulesView from "./components/CapsulesView";
 
 import AdminCapsulesView from "./components/AdminCapsulesView";
+import { Capsule } from "./components/CapsulesView";
+import { initialCapsules } from "./data/capsules";
 
 export type UserType = "teacher" | "psychologist" | null;
 
@@ -48,6 +50,24 @@ export default function Home() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
   const [showCapsules, setShowCapsules] = useState(false);
+  const [capsules, setCapsules] = useState<Capsule[]>(initialCapsules);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('mentalHealthCapsules');
+    if (saved) {
+      try {
+        setCapsules(JSON.parse(saved));
+      } catch (e) {
+        console.error("Error parsing saved capsules", e);
+      }
+    }
+  }, []);
+
+  // Save to localStorage when changed
+  useEffect(() => {
+    localStorage.setItem('mentalHealthCapsules', JSON.stringify(capsules));
+  }, [capsules]);
 
   const handleLogin = (role: UserType) => {
     setCurrentUser(role);
@@ -63,7 +83,7 @@ export default function Home() {
   };
 
   if (showCapsules) {
-    return <CapsulesView onBack={() => setShowCapsules(false)} />;
+    return <CapsulesView capsules={capsules} onBack={() => setShowCapsules(false)} />;
   }
 
   return (
@@ -106,7 +126,7 @@ export default function Home() {
         )}
 
         {currentUser === "psychologist" && activeTab === "capsules" && (
-          <AdminCapsulesView />
+          <AdminCapsulesView capsules={capsules} onUpdateCapsules={setCapsules} />
         )}
       </main>
     </>

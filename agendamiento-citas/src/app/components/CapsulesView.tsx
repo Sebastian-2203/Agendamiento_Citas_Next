@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 export interface Capsule {
     id: number;
@@ -10,30 +10,11 @@ export interface Capsule {
 }
 
 interface CapsulesViewProps {
+    capsules: Capsule[];
     onBack?: () => void;
 }
 
-export default function CapsulesView({ onBack }: CapsulesViewProps) {
-    const [capsules, setCapsules] = useState<Capsule[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCapsules = async () => {
-            try {
-                const res = await fetch('/api/capsules');
-                if (res.ok) {
-                    const data = await res.json();
-                    setCapsules(data);
-                }
-            } catch (error) {
-                console.error("Error fetching capsules:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchCapsules();
-    }, []);
+export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
 
     return (
         <section className="view active animate-fade-in" style={{ paddingBottom: "4rem" }}>
@@ -58,9 +39,7 @@ export default function CapsulesView({ onBack }: CapsulesViewProps) {
                 </div>
             </div>
 
-            {isLoading ? (
-                <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>Cargando cápsulas...</div>
-            ) : capsules.length === 0 ? (
+            {capsules.length === 0 ? (
                 <div style={{ padding: '3rem', textAlign: 'center', background: '#f8fafc', borderRadius: '12px', color: '#64748b' }}>
                     <p>No hay cápsulas disponibles por el momento.</p>
                 </div>
