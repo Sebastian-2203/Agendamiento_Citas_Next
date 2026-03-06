@@ -157,7 +157,19 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
 
         const dayBookings = bookings.filter(b => b.date === selectedDate);
 
-        return dailySchedule.map(time => {
+        // Determinar el día de la semana
+        const [y, m, d] = selectedDate.split('-');
+        const selectedDayOfWeek = new Date(parseInt(y), parseInt(m) - 1, parseInt(d)).getDay();
+
+        // Si es viernes (5), los horarios permitidos son hasta las 03:00 PM inclusive
+        const allowedSchedule = selectedDayOfWeek === 5
+            ? dailySchedule.filter(time => {
+                const isAfter3PM = time === '04:00 PM' || time === '05:00 PM'; // Filtrar horas después de las 3pm
+                return !isAfter3PM;
+            })
+            : dailySchedule;
+
+        return allowedSchedule.map(time => {
             const isBooked = !!dayBookings.find(b => b.time === time);
             const isSelected = selectedSlot === time;
 
