@@ -41,7 +41,7 @@ export default function Header({
             </div>
 
             {currentUser && (
-                <nav id="nav-menu" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <nav id="nav-menu">
 
                     {/* Botones comunes para todos */}
                     <a

@@ -804,17 +804,62 @@ h4 {
     }
 
     .app-header {
-        padding: 1rem;
+        padding: 1rem 1.5rem;
         flex-direction: column;
         gap: 1rem;
     }
 
+    #nav-menu {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .user-profile {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .login-card {
+        padding: 2rem 1.5rem;
+        margin: 2rem auto;
+        width: 100%;
+    }
+
+    .container {
+        padding: 0 1rem;
+        margin: 1.5rem auto;
+    }
+
     .split-layout {
         flex-direction: column;
+        gap: 1.5rem;
     }
 
     .calendar-section,
     .timeslot-section {
         width: 100%;
+        padding: 1.5rem;
+    }
+
+    .calendar-header h3 {
+        font-size: 1.05rem;
+    }
+
+    .calendar-day {
+        font-size: 0.85rem;
+    }
+
+    .btn-primary, .btn-patient, .btn-secondary, .btn-danger {
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .capsule-card {
+        min-height: 250px;
     }
 }
