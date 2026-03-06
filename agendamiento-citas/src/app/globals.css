@@ -29,7 +29,7 @@
     --radius-lg: 1rem;
     --radius-xl: 1.25rem;
 
-    --font-family: 'Inter', system-ui, sans-serif;
+    --font-family: var(--font-outfit), 'Inter', system-ui, sans-serif;
 }
 
 * {
@@ -79,13 +79,18 @@ body {
 
 /* Header */
 .app-header {
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     padding: 1rem 3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all 0.3s ease;
 }
 
 .logo {
@@ -197,6 +202,56 @@ body {
     display: block;
 }
 
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Staggered Animations */
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-stagger-1 {
+    animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.animate-stagger-2 {
+    animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    opacity: 0;
+}
+
+.animate-stagger-3 {
+    animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    opacity: 0;
+}
+
+.animate-stagger-4 {
+    animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    opacity: 0;
+}
+
+.animate-stagger-5 {
+    animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    opacity: 0;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -255,8 +310,8 @@ h4 {
 
 .btn-primary:hover {
     background-color: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 164, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 164, 255, 0.4);
 }
 
 .btn-patient {
@@ -275,7 +330,8 @@ h4 {
 .btn-patient:hover {
     background-color: var(--patient-light);
     border-color: var(--patient-color);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(132, 204, 171, 0.4);
 }
 
 .btn-secondary {
@@ -293,6 +349,8 @@ h4 {
 .btn-secondary:hover {
     background-color: #f8fafc;
     border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .btn-danger {
@@ -854,7 +912,10 @@ h4 {
         font-size: 0.85rem;
     }
 
-    .btn-primary, .btn-patient, .btn-secondary, .btn-danger {
+    .btn-primary,
+    .btn-patient,
+    .btn-secondary,
+    .btn-danger {
         padding: 0.6rem 1rem;
         font-size: 0.95rem;
     }

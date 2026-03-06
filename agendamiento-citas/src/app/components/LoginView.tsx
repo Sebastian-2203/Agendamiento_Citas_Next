@@ -25,11 +25,11 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
     return (
         <section id="login-view" className="view active">
             <div className="login-card">
-                <h1>👋 Bienvenid@, ¡Qué gusto verte!</h1>
-                <p className="subtitle">Agenda tus citas de forma fácil y rápida ✨</p>
+                <h1 className="animate-stagger-1">👋 Bienvenid@, ¡Qué gusto verte!</h1>
+                <p className="subtitle animate-stagger-2">Agenda tus citas de forma fácil y rápida ✨</p>
 
                 {!showPsychLogin ? (
-                    <div className="login-options">
+                    <div className="login-options animate-stagger-3">
                         <button
                             onClick={() => setShowPsychLogin(true)}
                             className="btn-primary"
@@ -80,7 +80,7 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
                         </button>
                     </div>
                 ) : (
-                    <form onSubmit={handlePsychSubmit} style={{ marginTop: "1.5rem", textAlign: "left" }}>
+                    <form onSubmit={handlePsychSubmit} className="animate-stagger-3" style={{ marginTop: "1.5rem", textAlign: "left" }}>
                         <div className="form-group">
                             <label htmlFor="psych-username">Usuario</label>
                             <input
