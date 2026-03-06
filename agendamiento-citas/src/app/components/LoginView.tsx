@@ -4,9 +4,10 @@ import { UserType } from "../page";
 interface LoginViewProps {
     onLogin: (role: UserType) => void;
     onViewCapsules: () => void;
+    onViewProfeEnLinea: () => void;
 }
 
-export default function LoginView({ onLogin, onViewCapsules }: LoginViewProps) {
+export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea }: LoginViewProps) {
     const [showPsychLogin, setShowPsychLogin] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -67,6 +68,15 @@ export default function LoginView({ onLogin, onViewCapsules }: LoginViewProps) {
                         >
                             <span>🧠</span>
                             Cápsulas de salud mental
+                        </button>
+
+                        <button
+                            onClick={onViewProfeEnLinea}
+                            className="btn-secondary"
+                            style={{ fontSize: "1.1rem", padding: "1rem", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%", background: "#eff6ff", border: "1px solid #bfdbfe", color: "#1e3a8a", marginTop: "0.5rem" }}
+                        >
+                            <span>📱</span>
+                            Contigo Profe en Línea
                         </button>
                     </div>
                 ) : (

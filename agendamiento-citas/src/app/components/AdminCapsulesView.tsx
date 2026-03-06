@@ -14,19 +14,32 @@ export interface Capsule {
 export default function AdminCapsulesView({
     capsules,
     onUpdateCapsules,
-    onForceReload
+    onForceReload,
+    profeEnLineaImageUrl
 }: {
     capsules: Capsule[],
     onUpdateCapsules: React.Dispatch<React.SetStateAction<Capsule[]>>,
-    onForceReload: () => void
+    onForceReload: () => void,
+    profeEnLineaImageUrl: string
 }) {
-    // Form state
+    // Form state for Capsules
     const [isEditing, setIsEditing] = useState(false);
     const [currentCapsule, setCurrentCapsule] = useState<Partial<Capsule> | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // File input ref
+    // Form state for Profe en Linea Flyer
+    const [flyerUrl, setFlyerUrl] = useState(profeEnLineaImageUrl || "");
+    const [isSubmittingFlyer, setIsSubmittingFlyer] = useState(false);
+
+    useEffect(() => {
+        setFlyerUrl(profeEnLineaImageUrl || "");
+    }, [profeEnLineaImageUrl]);
+
+    // File input ref for capsules
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // File input ref for flyer
+    const flyerInputRef = useRef<HTMLInputElement>(null);
 
     const handleDelete = async (id: number) => {
         if (!confirm('¿Estás segura de que quieres eliminar esta cápsula?')) return;
@@ -88,6 +101,48 @@ export default function AdminCapsulesView({
         fileInputRef.current?.click();
     };
 
+    // Manejo de carga de imagen para Profe en linea
+    const handleFlyerImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('La imagen no puede pesar más de 2MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFlyerUrl(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleFlyerSubmit = async () => {
+        if (!flyerUrl) {
+            alert("Por favor selecciona o ingresa una URL de imagen.");
+            return;
+        }
+
+        setIsSubmittingFlyer(true);
+        try {
+            const res = await fetch('/api/settings/profe-en-linea', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imageUrl: flyerUrl })
+            });
+
+            if (!res.ok) throw new Error('Error guardando flyer');
+
+            alert('Flyer guardado exitosamente');
+            onForceReload();
+        } catch (err: any) {
+            alert(err.message || 'Error al guardar el flyer');
+        } finally {
+            setIsSubmittingFlyer(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentCapsule || !currentCapsule.title || !currentCapsule.description || !currentCapsule.imageUrl) {
@@ -146,6 +201,75 @@ export default function AdminCapsulesView({
                     </button>
                 )}
             </div>
+
+            {/* Configuración Profe En Linea */}
+            {!isEditing && (
+                <div style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
+                    <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem', color: '#1e293b' }}>Configuración: Profe en Línea</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Administra la imagen del flyer de atención y orientación. Esta imagen aparecerá cuando los usuarios hagan clic en "Contigo Profe en Línea".</p>
+
+                    <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                        <div
+                            onClick={() => flyerInputRef.current?.click()}
+                            style={{
+                                width: '200px',
+                                height: '280px',
+                                borderRadius: '12px',
+                                border: '2px dashed #cbd5e1',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                overflow: 'hidden',
+                                position: 'relative',
+                                backgroundColor: '#f8fafc',
+                                flexShrink: 0
+                            }}
+                        >
+                            {flyerUrl ? (
+                                <img src={flyerUrl} alt="Preview Flyer" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            ) : (
+                                <div style={{ color: '#64748b', textAlign: 'center' }}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto 0.5rem block' }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    <span style={{ fontSize: '0.9rem' }}>Click para subir</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ flex: 1, minWidth: '250px', display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem 0' }}>
+                            <input
+                                type="file"
+                                ref={flyerInputRef}
+                                onChange={handleFlyerImageChange}
+                                accept="image/jpeg, image/png, image/webp"
+                                style={{ display: 'none' }}
+                            />
+
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.9rem' }}>URL de Imagen</label>
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    style={{ padding: '0.75rem', fontSize: '0.95rem', width: '100%', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                                    value={flyerUrl?.startsWith('http') ? flyerUrl : ''}
+                                    onChange={e => setFlyerUrl(e.target.value)}
+                                    placeholder="O pega el link (https://...)"
+                                />
+                            </div>
+
+                            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-start' }}>
+                                <button
+                                    onClick={handleFlyerSubmit}
+                                    className="btn-primary"
+                                    disabled={isSubmittingFlyer || !flyerUrl}
+                                >
+                                    {isSubmittingFlyer ? 'Guardando...' : 'Guardar Flyer'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
 
             {isEditing ? (

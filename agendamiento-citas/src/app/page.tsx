@@ -7,6 +7,7 @@ import PatientView from "./components/PatientView";
 import PsychologistView from "./components/PsychologistView";
 import ProfileView from "./components/ProfileView";
 import TeacherProfileForm from "./components/TeacherProfileForm";
+import ProfeEnLineaView from "./components/ProfeEnLineaView";
 import CapsulesView from "./components/CapsulesView";
 
 import AdminCapsulesView from "./components/AdminCapsulesView";
@@ -50,21 +51,34 @@ export default function Home() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
   const [showCapsules, setShowCapsules] = useState(false);
+  const [showProfeEnLinea, setShowProfeEnLinea] = useState(false);
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [isCapsulesLoading, setIsCapsulesLoading] = useState(false);
+  const [profeEnLineaImageUrl, setProfeEnLineaImageUrl] = useState("");
 
   const fetchCapsules = async () => {
     setIsCapsulesLoading(true);
     try {
-      const res = await fetch('/api/capsules');
-      if (res.ok) {
-        const data = await res.json();
+      const [capsulesRes, profeRes] = await Promise.all([
+        fetch('/api/capsules'),
+        fetch('/api/settings/profe-en-linea')
+      ]);
+
+      if (capsulesRes.ok) {
+        const data = await capsulesRes.json();
         if (Array.isArray(data)) {
           setCapsules(data);
         }
       }
+
+      if (profeRes.ok) {
+        const profeData = await profeRes.json();
+        if (profeData && typeof profeData.imageUrl === 'string') {
+          setProfeEnLineaImageUrl(profeData.imageUrl);
+        }
+      }
     } catch (e) {
-      console.error("Error fetching capsules from API", e);
+      console.error("Error fetching data from API", e);
     } finally {
       setIsCapsulesLoading(false);
     }
@@ -79,6 +93,7 @@ export default function Home() {
     setCurrentUser(role);
     setActiveTab("agenda");
     setShowCapsules(false);
+    setShowProfeEnLinea(false);
   };
 
   const handleLogout = () => {
@@ -86,10 +101,15 @@ export default function Home() {
     setTeacherProfile(null);
     setActiveTab("agenda");
     setShowCapsules(false);
+    setShowProfeEnLinea(false);
   };
 
   if (showCapsules) {
     return <CapsulesView capsules={capsules} onBack={() => setShowCapsules(false)} />;
+  }
+
+  if (showProfeEnLinea) {
+    return <ProfeEnLineaView onBack={() => setShowProfeEnLinea(false)} imageUrl={profeEnLineaImageUrl} />;
   }
 
   return (
@@ -103,7 +123,11 @@ export default function Home() {
       />
 
       <main className="container">
-        {!currentUser && <LoginView onLogin={handleLogin} onViewCapsules={() => setShowCapsules(true)} />}
+        {!currentUser && <LoginView
+          onLogin={handleLogin}
+          onViewCapsules={() => setShowCapsules(true)}
+          onViewProfeEnLinea={() => setShowProfeEnLinea(true)}
+        />}
 
         {currentUser === "teacher" && !teacherProfile && (
           <TeacherProfileForm onComplete={setTeacherProfile} />
@@ -132,7 +156,12 @@ export default function Home() {
         )}
 
         {currentUser === "psychologist" && activeTab === "capsules" && (
-          <AdminCapsulesView capsules={capsules} onUpdateCapsules={setCapsules} onForceReload={fetchCapsules} />
+          <AdminCapsulesView
+            capsules={capsules}
+            onUpdateCapsules={setCapsules}
+            onForceReload={fetchCapsules}
+            profeEnLineaImageUrl={profeEnLineaImageUrl}
+          />
         )}
       </main>
     </>
