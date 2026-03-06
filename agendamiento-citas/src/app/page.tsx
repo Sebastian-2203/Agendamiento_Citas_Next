@@ -160,6 +160,7 @@ export default function Home() {
 
         {currentUser === "psychologist" && activeTab === "agenda" && (
           <PsychologistView
+            psychProfile={psychProfile}
             bookings={bookings}
             onUpdateBookings={setBookings}
           />

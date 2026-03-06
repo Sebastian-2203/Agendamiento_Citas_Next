@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Booking } from "../page";
+import { Booking, PsychProfile } from "../page";
 
 interface PsychologistViewProps {
+    psychProfile: PsychProfile;
     bookings: Booking[];
     onUpdateBookings: (bookings: Booking[]) => void;
 }
@@ -9,7 +10,7 @@ interface PsychologistViewProps {
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const daysWeek = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-export default function PsychologistView({ bookings, onUpdateBookings }: PsychologistViewProps) {
+export default function PsychologistView({ psychProfile, bookings, onUpdateBookings }: PsychologistViewProps) {
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [pendingCancelId, setPendingCancelId] = useState<string | null>(null);
 
@@ -44,7 +45,7 @@ export default function PsychologistView({ bookings, onUpdateBookings }: Psychol
                     <h2 style={{ fontSize: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         ⭐ Estas son tus próximas citas programadas
                     </h2>
-                    <p className="subtitle">Dra. Laura Pérez · Psicóloga</p>
+                    <p className="subtitle">{psychProfile.name} · Psicóloga</p>
                 </div>
             </div>
 
