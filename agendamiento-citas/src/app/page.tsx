@@ -45,8 +45,8 @@ export default function Home() {
   const [currentUser, setCurrentUser] = useState<UserType>(null);
   const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
   const [psychProfile, setPsychProfile] = useState<PsychProfile>({
-    name: "Dra. Laura Pérez",
-    avatarUrl: "https://i.pravatar.cc/150?img=47",
+    name: "Cargando...",
+    avatarUrl: "",
   });
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
@@ -59,9 +59,10 @@ export default function Home() {
   const fetchCapsules = async () => {
     setIsCapsulesLoading(true);
     try {
-      const [capsulesRes, profeRes] = await Promise.all([
+      const [capsulesRes, profeRes, profileRes] = await Promise.all([
         fetch('/api/capsules'),
-        fetch('/api/settings/profe-en-linea')
+        fetch('/api/settings/profe-en-linea'),
+        fetch('/api/settings/profile')
       ]);
 
       if (capsulesRes.ok) {
@@ -75,6 +76,22 @@ export default function Home() {
         const profeData = await profeRes.json();
         if (profeData && typeof profeData.imageUrl === 'string') {
           setProfeEnLineaImageUrl(profeData.imageUrl);
+        }
+      }
+
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        if (profileData && profileData.name) {
+          setPsychProfile({
+            name: profileData.name,
+            avatarUrl: profileData.avatarUrl || "https://i.pravatar.cc/150?u=psychologist",
+          });
+        } else {
+          // Default si no hay nada guardado
+          setPsychProfile({
+            name: "Psicóloga",
+            avatarUrl: "https://i.pravatar.cc/150?u=psychologist",
+          });
         }
       }
     } catch (e) {

@@ -87,7 +87,6 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
                                 type="text"
                                 id="psych-username"
                                 required
-                                placeholder="admin"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
@@ -98,7 +97,6 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
                                 type="password"
                                 id="psych-password"
                                 required
-                                placeholder="1234"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />

@@ -9,6 +9,7 @@ interface ProfileViewProps {
 export default function ProfileView({ profile, onSave }: ProfileViewProps) {
     const [name, setName] = useState(profile.name);
     const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -23,10 +24,32 @@ export default function ProfileView({ profile, onSave }: ProfileViewProps) {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSave({ name, avatarUrl });
-        alert("Perfil actualizado correctamente");
+
+        if (!name.trim()) {
+            alert("El nombre no puede estar vacío");
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const res = await fetch('/api/settings/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, avatarUrl })
+            });
+
+            if (!res.ok) throw new Error('Error guardando perfil');
+
+            // Si funciona, actualizamos la vista
+            onSave({ name, avatarUrl });
+            alert("Perfil actualizado correctamente");
+        } catch (err: any) {
+            alert(err.message || 'Error al actualizar el perfil');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -70,7 +93,9 @@ export default function ProfileView({ profile, onSave }: ProfileViewProps) {
                     </div>
 
                     <div style={{ marginTop: "2rem", display: "flex", justifyContent: "flex-end" }}>
-                        <button type="submit" className="btn-primary">Guardar Cambios</button>
+                        <button type="submit" className="btn-primary" disabled={isSaving}>
+                            {isSaving ? "Guardando..." : "Guardar Cambios"}
+                        </button>
                     </div>
                 </form>
             </div>
