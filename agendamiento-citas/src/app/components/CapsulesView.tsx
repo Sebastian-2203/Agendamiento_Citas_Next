@@ -243,149 +243,258 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                 </div>
             )}
 
-            {/* Float Action Button para Sugerencias */}
-            <button
-                onClick={() => setShowSuggestionModal(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '2rem',
-                    right: '2rem',
-                    background: '#3b82f6',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50px',
-                    padding: '1rem 1.5rem',
-                    fontSize: '1rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.8rem',
-                    zIndex: 900,
-                    transition: 'transform 0.2s',
-                    animation: 'slideUp 0.5s ease-out'
-                }}
-                onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-                onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                <span>¡Sugiere un Recurso!</span>
-            </button>
+            {/* Float Action Button para Sugerencias (Chat Icon) */}
+            {!showSuggestionModal && (
+                <button
+                    onClick={() => setShowSuggestionModal(true)}
+                    style={{
+                        position: 'fixed',
+                        bottom: '2rem',
+                        right: '2rem',
+                        background: 'var(--primary-color, #63a4ff)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '60px',
+                        height: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 10px 25px rgba(99, 164, 255, 0.4)',
+                        zIndex: 900,
+                        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        animation: 'chatPopUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    }}
+                    onMouseEnter={e => {
+                        e.currentTarget.style.transform = 'scale(1.1) translateY(-5px)';
+                        e.currentTarget.style.boxShadow = '0 15px 35px rgba(99, 164, 255, 0.5)';
+                    }}
+                    onMouseLeave={e => {
+                        e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 10px 25px rgba(99, 164, 255, 0.4)';
+                    }}
+                >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                </button>
+            )}
 
-            {/* Modal de Buzón de Sugerencias */}
+            {/* Widget de Buzón de Sugerencias (Estilo Chat Flotante) */}
             {showSuggestionModal && (
                 <div
                     style={{
                         position: 'fixed',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        backgroundColor: 'rgba(15, 23, 42, 0.85)',
-                        backdropFilter: 'blur(8px)',
+                        bottom: '2rem',
+                        right: '2rem',
+                        background: '#ffffff',
+                        borderRadius: '24px',
+                        width: '360px',
+                        maxWidth: 'calc(100vw - 4rem)',
+                        boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 0 20px rgba(99, 164, 255, 0.1)',
                         zIndex: 9999,
+                        overflow: 'hidden',
                         display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '1rem',
-                        animation: 'fadeIn 0.2s ease-out'
+                        flexDirection: 'column',
+                        animation: 'chatPopUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                        border: '1px solid rgba(226, 232, 240, 0.8)',
+                        transformOrigin: 'bottom right'
                     }}
-                    onClick={() => setShowSuggestionModal(false)}
                 >
-                    <div
-                        style={{
-                            background: '#ffffff',
-                            borderRadius: '24px',
-                            width: '100%',
-                            maxWidth: '500px',
-                            padding: '2.5rem',
-                            position: 'relative',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                            animation: 'slideUp 0.3s ease-out'
-                        }}
-                        onClick={e => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={() => setShowSuggestionModal(false)}
-                            style={{
-                                position: 'absolute',
-                                top: '1.5rem',
-                                right: '1.5rem',
-                                background: '#f1f5f9',
-                                border: 'none',
+                    {/* Header del Chat */}
+                    <div style={{
+                        background: 'linear-gradient(135deg, var(--primary-color, #63a4ff) 0%, var(--primary-hover, #4e8deb) 100%)',
+                        padding: '1.25rem 1.5rem',
+                        color: 'white',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                background: 'white',
                                 borderRadius: '50%',
-                                width: '32px',
-                                height: '32px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                color: 'var(--primary-color)',
+                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                            }}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"></path><path d="M18 9h2"></path></svg>
+                            </div>
+                            <div>
+                                <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, letterSpacing: '-0.01em' }}>Sugerencias</h3>
+                                <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.9, fontWeight: 500 }}>Buzón de Ideas</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setShowSuggestionModal(false)}
+                            style={{
+                                background: 'rgba(255,255,255,0.2)',
+                                border: 'none',
+                                color: 'white',
                                 cursor: 'pointer',
-                                color: '#64748b',
-                                transition: 'all 0.2s'
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.2s',
+                                backdropFilter: 'blur(4px)'
                             }}
-                            onMouseEnter={e => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#64748b'; }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                                e.currentTarget.style.transform = 'scale(1)';
+                            }}
                         >
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
+                    </div>
 
-                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"></path><path d="M18 9h2"></path></svg>
-                            </div>
-                            <h2 style={{ fontSize: '1.6rem', color: '#0f172a', margin: '0 0 0.5rem 0' }}>Buzón de Sugerencias</h2>
-                            <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>
-                                ¿Hay algún tema o cápsula que te gustaría ver? ¡Escríbele a nuestra Psicóloga!
+                    {/* Cuerpo del Chat */}
+                    <div style={{ padding: '1.5rem', background: '#fafbfc', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+                        {/* Mensaje Tipo Burbuja de Chat */}
+                        <div style={{
+                            background: 'white',
+                            padding: '1.25rem',
+                            borderRadius: '16px 16px 16px 4px',
+                            boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+                            border: '1px solid #f1f5f9',
+                            position: 'relative'
+                        }}>
+                            <p style={{ color: '#475569', fontSize: '0.95rem', margin: 0, lineHeight: 1.5 }}>
+                                ¡Hola! 👋<br /><br />
+                                ¿Hay alguna cápsula, recurso o taller que te gustaría ver? Déjanos tu idea aquí abajo para construir esto juntos.
                             </p>
+                            <div style={{
+                                position: 'absolute',
+                                left: '-8px',
+                                bottom: '0',
+                                width: '16px',
+                                height: '16px',
+                                background: 'inherit',
+                                borderLeft: '1px solid #f1f5f9',
+                                borderBottom: '1px solid #f1f5f9',
+                                borderBottomLeftRadius: '16px',
+                                zIndex: -1,
+                                clipPath: 'polygon(0 0, 100% 100%, 100% 0)'
+                            }}></div>
                         </div>
 
-                        <form onSubmit={handleSuggestionSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                        <form onSubmit={handleSuggestionSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155', fontSize: '0.9rem' }}>Tu Nombre (Opcional)</label>
                                 <input
                                     type="text"
-                                    className="input-field"
-                                    placeholder="Ej: Profe Juanita"
+                                    placeholder="Tu Nombre (Opcional)"
                                     value={suggestionName}
                                     onChange={e => setSuggestionName(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.9rem 1rem',
+                                        fontSize: '0.95rem',
+                                        borderRadius: '12px',
+                                        border: '1px solid #e2e8f0',
+                                        background: 'white',
+                                        transition: 'all 0.2s',
+                                        outline: 'none',
+                                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onFocus={e => {
+                                        e.currentTarget.style.borderColor = 'var(--primary-color)';
+                                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(99, 164, 255, 0.15)';
+                                    }}
+                                    onBlur={e => {
+                                        e.currentTarget.style.borderColor = '#e2e8f0';
+                                        e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.01)';
+                                    }}
                                 />
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#334155', fontSize: '0.9rem' }}>Tu Sugerencia *</label>
                                 <textarea
-                                    className="input-field"
-                                    rows={5}
-                                    placeholder="Me gustaría que subieran una cápsula sobre manejo de estrés en el aula..."
+                                    rows={3}
+                                    placeholder="Escribe tu sugerencia aquí..."
                                     required
                                     value={suggestionText}
                                     onChange={e => setSuggestionText(e.target.value)}
-                                    style={{ resize: 'vertical' }}
+                                    style={{
+                                        width: '100%',
+                                        resize: 'none',
+                                        padding: '0.9rem 1rem',
+                                        fontSize: '0.95rem',
+                                        borderRadius: '12px',
+                                        border: '1px solid #e2e8f0',
+                                        background: 'white',
+                                        transition: 'all 0.2s',
+                                        outline: 'none',
+                                        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.01)',
+                                        fontFamily: 'inherit'
+                                    }}
+                                    onFocus={e => {
+                                        e.currentTarget.style.borderColor = 'var(--primary-color)';
+                                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(99, 164, 255, 0.15)';
+                                    }}
+                                    onBlur={e => {
+                                        e.currentTarget.style.borderColor = '#e2e8f0';
+                                        e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.01)';
+                                    }}
                                 />
                             </div>
-                            <button
-                                type="submit"
-                                className="btn-primary"
-                                disabled={isSubmittingSuggestion}
-                                style={{
-                                    marginTop: '0.5rem',
-                                    padding: '1rem',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    background: isSubmittingSuggestion ? '#94a3b8' : '#3b82f6'
-                                }}
-                            >
-                                {isSubmittingSuggestion ? (
-                                    <>
-                                        <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
-                                        Enviando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                                        Enviar Sugerencia
-                                    </>
-                                )}
-                            </button>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.2rem' }}>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmittingSuggestion || !suggestionText.trim()}
+                                    style={{
+                                        padding: '0.75rem 1.4rem',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        background: isSubmittingSuggestion || !suggestionText.trim() ? '#cbd5e1' : 'var(--primary-color, #63a4ff)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '24px',
+                                        fontSize: '0.95rem',
+                                        fontWeight: 600,
+                                        cursor: isSubmittingSuggestion || !suggestionText.trim() ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.2s',
+                                        boxShadow: isSubmittingSuggestion || !suggestionText.trim() ? 'none' : '0 4px 12px rgba(99, 164, 255, 0.3)'
+                                    }}
+                                    onMouseEnter={e => {
+                                        if (!isSubmittingSuggestion && suggestionText.trim()) {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 6px 15px rgba(99, 164, 255, 0.4)';
+                                            e.currentTarget.style.background = 'var(--primary-hover, #4e8deb)';
+                                        }
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (!isSubmittingSuggestion && suggestionText.trim()) {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 164, 255, 0.3)';
+                                            e.currentTarget.style.background = 'var(--primary-color, #63a4ff)';
+                                        }
+                                    }}
+                                >
+                                    {isSubmittingSuggestion ? (
+                                        <>
+                                            <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                                            Enviando...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Enviar Mensaje</span>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -411,9 +520,14 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
                     to { opacity: 1; }
                 }
 
+                @keyframes chatPopUp {
+                    from { opacity: 0; transform: scale(0.8) translateY(20px); }
+                    to { opacity: 1; transform: scale(1) translateY(0); }
+                }
+
                 @keyframes slideUp {
-                    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-                    to { opacity: 1; transform: translateY(0) scale(1); }
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
                 }
             `}</style>
         </section>
