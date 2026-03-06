@@ -55,7 +55,7 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
     };
 
     return (
-        <section className="view active animate-fade-in" style={{ paddingBottom: "4rem" }}>
+        <section className="view active animate-fade-in container" style={{ paddingBottom: "4rem", paddingTop: "2rem" }}>
             <div className="header-actions" style={{ marginBottom: "2rem", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1rem" }}>
                 {onBack && (
                     <button
