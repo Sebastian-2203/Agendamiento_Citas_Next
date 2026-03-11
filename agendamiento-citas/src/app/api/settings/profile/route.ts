@@ -26,7 +26,7 @@ export async function GET() {
         return NextResponse.json({ name: '', avatarUrl: '' });
     } catch (error) {
         console.error('Error al obtener perfil de admin de Redis', error);
-        return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+        return NextResponse.json({ name: '', avatarUrl: '' }, { status: 200 });
     }
 }
 

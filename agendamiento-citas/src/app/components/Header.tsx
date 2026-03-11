@@ -87,7 +87,7 @@ export default function Header({
 
                     <div className="user-profile">
                         <img
-                            src={currentUser === "teacher" ? "https://i.pravatar.cc/150?img=1" : psychProfile.avatarUrl}
+                            src={currentUser === "teacher" ? "https://i.pravatar.cc/150?img=1" : (psychProfile.avatarUrl || "https://i.pravatar.cc/150?u=psychologist")}
                             alt="Avatar"
                             className="avatar"
                         />

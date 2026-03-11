@@ -13,6 +13,10 @@ import CapsulesView from "./components/CapsulesView";
 import AdminCapsulesView from "./components/AdminCapsulesView";
 import { Capsule } from "./components/CapsulesView";
 import { initialCapsules } from "./data/capsules";
+import LandingHero from "./components/LandingHero";
+import LandingFeatures from "./components/LandingFeatures";
+import LandingHowItWorks from "./components/LandingHowItWorks";
+import PublicFooter from "./components/PublicFooter";
 
 export type UserType = "teacher" | "psychologist" | null;
 
@@ -43,6 +47,7 @@ export interface TeacherProfile {
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<UserType>(null);
+  const [isLanding, setIsLanding] = useState(true);
   const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
   const [psychProfile, setPsychProfile] = useState<PsychProfile>({
     name: "Cargando...",
@@ -119,6 +124,7 @@ export default function Home() {
     setActiveTab("agenda");
     setShowCapsules(false);
     setShowProfeEnLinea(false);
+    setIsLanding(false);
   };
 
   if (showCapsules) {
@@ -130,7 +136,7 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', overflowX: 'hidden' }}>
       <Header
         currentUser={currentUser}
         psychProfile={psychProfile}
@@ -139,49 +145,69 @@ export default function Home() {
         onLogout={handleLogout}
       />
 
-      <main className="container">
-        {!currentUser && <LoginView
-          onLogin={handleLogin}
-          onViewCapsules={() => setShowCapsules(true)}
-          onViewProfeEnLinea={() => setShowProfeEnLinea(true)}
-        />}
+      {!currentUser && isLanding && (
+        <>
+          <main className="container" style={{ flex: 1, display: 'flex', flexDirection: 'column', zIndex: 1, padding: 0 }}>
+            <LandingHero onGetStarted={() => setIsLanding(false)} />
+            <LandingFeatures />
+            <LandingHowItWorks onAction={() => setIsLanding(false)} />
+          </main>
+          <PublicFooter />
+        </>
+      )}
 
-        {currentUser === "teacher" && !teacherProfile && (
-          <TeacherProfileForm onComplete={setTeacherProfile} />
-        )}
+      {(currentUser || !isLanding) && (
+        <main className="container" style={{ flex: 1, zIndex: 1 }}>
+          {!currentUser && (
+            <div style={{ marginBottom: '2rem', marginTop: '1rem' }}>
+              <button className="btn-secondary" onClick={() => setIsLanding(true)}>
+                ← Volver a la página principal
+              </button>
+            </div>
+          )}
+          {!currentUser && <LoginView
+            onLogin={handleLogin}
+            onViewCapsules={() => setShowCapsules(true)}
+            onViewProfeEnLinea={() => setShowProfeEnLinea(true)}
+          />}
 
-        {currentUser === "teacher" && teacherProfile && (
-          <PatientView
-            bookings={bookings}
-            teacherProfile={teacherProfile}
-            onBook={(booking) => setBookings([...bookings, booking])}
-          />
-        )}
+          {currentUser === "teacher" && !teacherProfile && (
+            <TeacherProfileForm onComplete={setTeacherProfile} />
+          )}
 
-        {currentUser === "psychologist" && activeTab === "agenda" && (
-          <PsychologistView
-            psychProfile={psychProfile}
-            bookings={bookings}
-            onUpdateBookings={setBookings}
-          />
-        )}
+          {currentUser === "teacher" && teacherProfile && (
+            <PatientView
+              bookings={bookings}
+              teacherProfile={teacherProfile}
+              onBook={(booking) => setBookings([...bookings, booking])}
+            />
+          )}
 
-        {currentUser === "psychologist" && activeTab === "profile" && (
-          <ProfileView
-            profile={psychProfile}
-            onSave={setPsychProfile}
-          />
-        )}
+          {currentUser === "psychologist" && activeTab === "agenda" && (
+            <PsychologistView
+              psychProfile={psychProfile}
+              bookings={bookings}
+              onUpdateBookings={setBookings}
+            />
+          )}
 
-        {currentUser === "psychologist" && activeTab === "capsules" && (
-          <AdminCapsulesView
-            capsules={capsules}
-            onUpdateCapsules={setCapsules}
-            onForceReload={fetchCapsules}
-            profeEnLineaImageUrl={profeEnLineaImageUrl}
-          />
-        )}
-      </main>
-    </>
+          {currentUser === "psychologist" && activeTab === "profile" && (
+            <ProfileView
+              profile={psychProfile}
+              onSave={setPsychProfile}
+            />
+          )}
+
+          {currentUser === "psychologist" && activeTab === "capsules" && (
+            <AdminCapsulesView
+              capsules={capsules}
+              onUpdateCapsules={setCapsules}
+              onForceReload={fetchCapsules}
+              profeEnLineaImageUrl={profeEnLineaImageUrl}
+            />
+          )}
+        </main>
+      )}
+    </div>
   );
 }
