@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
         // Obtener actuales
         const data = await redis.get(KV_KEY);
-        let capsules: Capsule[] = data ? JSON.parse(data) : [];
+        const capsules: Capsule[] = data ? JSON.parse(data) : [];
 
         // Generar ID
         const maxId = capsules.reduce((max, c) => Math.max(max, c.id), 0);
@@ -76,7 +76,7 @@ export async function PUT(request: Request) {
 
         const redis = await getRedis();
         const data = await redis.get(KV_KEY);
-        let capsules: Capsule[] = data ? JSON.parse(data) : [];
+        const capsules: Capsule[] = data ? JSON.parse(data) : [];
 
         if (capsules.length === 0) {
             await redis.disconnect();
@@ -118,7 +118,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ success: true });
         }
 
-        let capsules: Capsule[] = JSON.parse(data);
+        const capsules: Capsule[] = JSON.parse(data);
         const newCapsules = capsules.filter(c => c.id !== id);
 
         await redis.set(KV_KEY, JSON.stringify(newCapsules));

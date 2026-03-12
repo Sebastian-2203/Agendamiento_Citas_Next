@@ -47,8 +47,8 @@ export default function CapsulesView({ capsules, onBack }: CapsulesViewProps) {
             } else {
                 throw new Error(data.message || 'Error al enviar');
             }
-        } catch (error: any) {
-            alert(error.message || 'Hubo un error al enviar tu sugerencia.');
+        } catch (error: unknown) {
+            alert(error instanceof Error ? error.message : 'Hubo un error al enviar tu sugerencia.');
         } finally {
             setIsSubmittingSuggestion(false);
         }

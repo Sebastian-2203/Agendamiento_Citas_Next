@@ -13,12 +13,10 @@ export interface Capsule {
 
 export default function AdminCapsulesView({
     capsules,
-    onUpdateCapsules,
     onForceReload,
     profeEnLineaImageUrl
 }: {
     capsules: Capsule[],
-    onUpdateCapsules: React.Dispatch<React.SetStateAction<Capsule[]>>,
     onForceReload: () => void,
     profeEnLineaImageUrl: string
 }) {
@@ -48,8 +46,8 @@ export default function AdminCapsulesView({
             const res = await fetch(`/api/capsules?id=${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Failed to delete capsule');
             onForceReload();
-        } catch (err: any) {
-            alert(err.message || 'Error al eliminar cápsula');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Error al eliminar cápsula');
         }
     };
 
@@ -136,8 +134,8 @@ export default function AdminCapsulesView({
 
             alert('Flyer guardado exitosamente');
             onForceReload();
-        } catch (err: any) {
-            alert(err.message || 'Error al guardar el flyer');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Error al guardar el flyer');
         } finally {
             setIsSubmittingFlyer(false);
         }
@@ -174,8 +172,8 @@ export default function AdminCapsulesView({
             onForceReload();
             setIsEditing(false);
             setCurrentCapsule(null);
-        } catch (err: any) {
-            alert(err.message || 'Error al guardar la cápsula');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Error al guardar la cápsula');
         } finally {
             setIsSubmitting(false);
         }
@@ -206,7 +204,7 @@ export default function AdminCapsulesView({
             {!isEditing && (
                 <div style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', marginBottom: '2rem' }}>
                     <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem', color: '#1e293b' }}>Configuración: Profe en Línea</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Administra la imagen del flyer de atención y orientación. Esta imagen aparecerá cuando los usuarios hagan clic en "Contigo Profe en Línea".</p>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Administra la imagen del flyer de atención y orientación. Esta imagen aparecerá cuando los usuarios hagan clic en &quot;Contigo Profe en Línea&quot;.</p>
 
                     <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
                         <div

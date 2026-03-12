@@ -114,7 +114,7 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
     const renderDays = () => {
         const firstDay = new Date(calendar.year, calendar.month, 1).getDay();
         const daysInMonth = new Date(calendar.year, calendar.month + 1, 0).getDate();
-        let startOffset = firstDay === 0 ? 6 : firstDay - 1;
+        const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
         const days = [];
 
@@ -230,7 +230,7 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
                 {/* Right: Slots */}
                 <div id="slots-container" className={`timeslot-section ${!selectedDate ? 'hidden' : ''}`}>
                     {selectedDate && (() => {
-                        const [y, m, d] = selectedDate.split('-');
+                        const [, m, d] = selectedDate.split('-');
                         return (
                             <h4 id="selected-date-title" className="timeslot-title">
                                 Elegí para el {parseInt(d, 10)} de {months[parseInt(m, 10) - 1]}
@@ -259,7 +259,7 @@ export default function PatientView({ bookings, teacherProfile, onBook }: Patien
                     <p className="modal-desc">
                         Cita para el <strong id="modal-slot-info">
                             {selectedDate && selectedSlot ? (() => {
-                                const [y, m, d] = selectedDate.split('-');
+                                const [, m, d] = selectedDate.split('-');
                                 return `${parseInt(d, 10)} de ${months[parseInt(m, 10) - 1]} a las ${selectedSlot}`;
                             })() : ''}
                         </strong>. Por favor completa tus datos.

@@ -45,8 +45,8 @@ export default function ProfileView({ profile, onSave }: ProfileViewProps) {
             // Si funciona, actualizamos la vista
             onSave({ name, avatarUrl });
             alert("Perfil actualizado correctamente");
-        } catch (err: any) {
-            alert(err.message || 'Error al actualizar el perfil');
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : 'Error al actualizar el perfil');
         } finally {
             setIsSaving(false);
         }
