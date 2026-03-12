@@ -52,7 +52,7 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
-                            Soy Paciente
+                            Acompañamiento psicologico
                         </button>
 
                         <div style={{ margin: "1.5rem 0", display: "flex", alignItems: "center", gap: "1rem" }}>
