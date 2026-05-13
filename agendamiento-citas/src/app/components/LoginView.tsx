@@ -5,9 +5,10 @@ interface LoginViewProps {
     onLogin: (role: UserType) => void;
     onViewCapsules: () => void;
     onViewProfeEnLinea: () => void;
+    onViewAITeacher: () => void;
 }
 
-export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea }: LoginViewProps) {
+export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea, onViewAITeacher }: LoginViewProps) {
     const [showPsychLogin, setShowPsychLogin] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -77,6 +78,15 @@ export default function LoginView({ onLogin, onViewCapsules, onViewProfeEnLinea 
                         >
                             <span>📱</span>
                             Contigo Profe en Línea
+                        </button>
+
+                        <button
+                            onClick={onViewAITeacher}
+                            className="btn-secondary hover-lift"
+                            style={{ fontSize: "1.1rem", padding: "1rem", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%", background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border: "1px solid #bbf7d0", color: "#166534", marginTop: "0.5rem", transition: "all 0.3s ease" }}
+                        >
+                            <span>🤖</span>
+                            IA para Docentes
                         </button>
                     </div>
                 ) : (

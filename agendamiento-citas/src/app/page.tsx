@@ -8,6 +8,7 @@ import PsychologistView from "./components/PsychologistView";
 import ProfileView from "./components/ProfileView";
 import TeacherProfileForm from "./components/TeacherProfileForm";
 import ProfeEnLineaView from "./components/ProfeEnLineaView";
+import IaParaDocentesView from "./components/IaParaDocentesView";
 import CapsulesView from "./components/CapsulesView";
 
 import AdminCapsulesView from "./components/AdminCapsulesView";
@@ -51,6 +52,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"agenda" | "profile" | "capsules">("agenda");
   const [showCapsules, setShowCapsules] = useState(false);
   const [showProfeEnLinea, setShowProfeEnLinea] = useState(false);
+  const [showAITeacher, setShowAITeacher] = useState(false);
   const [capsules, setCapsules] = useState<Capsule[]>([]);
   const [, setIsCapsulesLoading] = useState(false);
   const [profeEnLineaImageUrl, setProfeEnLineaImageUrl] = useState("");
@@ -110,6 +112,7 @@ export default function Home() {
     setActiveTab("agenda");
     setShowCapsules(false);
     setShowProfeEnLinea(false);
+    setShowAITeacher(false);
   };
 
   const handleLogout = () => {
@@ -118,6 +121,7 @@ export default function Home() {
     setActiveTab("agenda");
     setShowCapsules(false);
     setShowProfeEnLinea(false);
+    setShowAITeacher(false);
   };
 
   if (showCapsules) {
@@ -126,6 +130,10 @@ export default function Home() {
 
   if (showProfeEnLinea) {
     return <ProfeEnLineaView onBack={() => setShowProfeEnLinea(false)} imageUrl={profeEnLineaImageUrl} />;
+  }
+
+  if (showAITeacher) {
+    return <IaParaDocentesView onBack={() => setShowAITeacher(false)} />;
   }
 
   return (
@@ -143,6 +151,7 @@ export default function Home() {
           onLogin={handleLogin}
           onViewCapsules={() => setShowCapsules(true)}
           onViewProfeEnLinea={() => setShowProfeEnLinea(true)}
+          onViewAITeacher={() => setShowAITeacher(true)}
         />}
 
         {currentUser === "teacher" && !teacherProfile && (
